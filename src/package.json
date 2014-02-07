@@ -1,0 +1,8 @@
+{
+  "name": "odin",
+  "description": "Tema base para desenvolvimento em WordPress",
+  "version": "2.2.3",
+  "title": "Odin Framework",
+  "homepage": "http://wpod.in/",
+  "main": "gulpfile.js"
+}
