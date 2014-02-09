@@ -7,13 +7,14 @@
 	"expr"     : true,
 	"immed"    : true,
 	"noarg"    : true,
-	"onevar"   : true,
+	"vars"     : true,
 	"quotmark" : "single",
 	"trailing" : true,
 	"undef"    : true,
 	"unused"   : true,
 	"browser"  : true,
 	"globals"  : {
-		"require" : true
+		"require" : true,
+		"console" : true
 	}
 }

@@ -74,6 +74,25 @@ gulp.task( 'compass', function() {
 
 
 
+gulp.task( 'watch', function() {
+	var watchers = [
+		gulp.watch( dirs.sass + '/**/*.{sass, scss}', [ 'compass' ] ),
+		gulp.watch( dirs.js + '/**/*.js', [ 'jshint', 'uglify' ] )
+	];
+
+	watchers.forEach(function( watcher ) {
+		watcher.on( 'change', function( e ) {
+			// Get just filename
+			var filename = e.path.split( '/' ).pop();
+			var bars = '\n================================================';
+
+			console.log( ( bars + '\nFile ' + filename + ' was ' + e.type + ', runing tasks...' + bars ).toUpperCase() );
+		});
+	});
+});
+
+
+
 /**
  * Execution Tasks
  */
