@@ -69,8 +69,7 @@ gulp.task( 'compass', function() {
 			config_file : './config.rb',
 			css : 'stylesheets'
 		})
-	)
-	.pipe( gulp.dest( '' ) );
+	);
 });
 
 
