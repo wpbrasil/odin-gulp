@@ -63,7 +63,14 @@ gulp.task( 'uglify-bootstrap', function() {
 
 
 gulp.task( 'compass', function() {
-
+	gulp.src( dirs.sass + './**/*.{sass, scss}' )
+	.pipe(
+		compass({
+			config_file : './config.rb',
+			css : 'stylesheets'
+		})
+	)
+	.pipe( gulp.dest( '' ) );
 });
 
 
