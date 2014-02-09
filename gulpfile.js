@@ -97,6 +97,19 @@
 
 
 
+	gulp.task( 'imagemin', function() {
+		gulp.src( dirs.images + '/**/*.{jpg, png, gif}' )
+		.pipe(
+			imagemin({
+				optimizationLevel: 7,
+				progressive: true
+			})
+		)
+		.pipe( gulp.dest( dirs.images ) );
+	});
+
+
+
 	/**
 	 * Execution Tasks
 	 */
