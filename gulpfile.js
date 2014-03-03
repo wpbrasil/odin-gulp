@@ -10,10 +10,10 @@
 	var jshint    = require( 'gulp-jshint' );
 	var minifycss = require( 'gulp-minify-css' );
 	var rename    = require( 'gulp-rename' );
-	var ssh       = require( 'gulp-ssh' );
 	var uglify    = require( 'gulp-uglify' );
 	var zip       = require( 'gulp-zip' );
 	var rsync     = require( 'rsyncwrapper' ).rsync;
+	var ftp       = require( 'gulp-ftp' );
 	var gulpconfig = require( './gulpconfig' )();
 
 	require( 'colors' );
@@ -108,12 +108,12 @@
 
 
 	gulp.task( 'rsync-staging', function() {
-		var rsync_config = gulpconfig.rsync_config;
-		rsync_config.options.src = rsync_config.staging.src;
-		rsync_config.options.dest = rsync_config.staging.dest;
+		var rsyncConfig = gulpconfig.rsyncConfig;
+		rsyncConfig.options.src = rsyncConfig.staging.src;
+		rsyncConfig.options.dest = rsyncConfig.staging.dest;
 
 		return rsync(
-			rsync_config,
+			rsyncConfig,
 			function( err, stdout, stderr, cmd ) {
 				console.log( 'Shell command was:', cmd.cyan );
 
@@ -129,12 +129,12 @@
 
 
 	gulp.task( 'rsync-production', function() {
-		var rsync_config = gulpconfig.rsync_config;
-		rsync_config.options.src = rsync_config.production.src;
-		rsync_config.options.dest = rsync_config.production.dest;
+		var rsyncConfig = gulpconfig.rsyncConfig;
+		rsyncConfig.options.src = rsyncConfig.production.src;
+		rsyncConfig.options.dest = rsyncConfig.production.dest;
 
 		return rsync(
-			rsync_config,
+			rsyncConfig,
 			function( err, stdout, stderr, cmd ) {
 				console.log( 'Shell command was:', cmd.cyan );
 
@@ -144,6 +144,21 @@
 
 				console.log( 'Success!', stdout.grey );
 			}
+		);
+	});
+
+
+
+	gulp.task( 'ftp', function() {
+		var ftpConfig = gulpconfig.ftpConfig;
+
+		gulp.src( gulpconfig.dirs.deploy )
+		.pipe(
+			ftp({
+				host : ftpConfig.host,
+				user : ftpConfig.user,
+				pass : ftpConfig.password
+			})
 		);
 	});
 

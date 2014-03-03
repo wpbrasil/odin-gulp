@@ -1,19 +1,28 @@
-var gulpconfig = function() {
+module.exports = function gulpconfig() {
 	'use strict';
 
 	return {
 		dirs : {
-			js: '../assets/js',
-			sass: '../assets/sass',
-			css : '../assets/css',
-			images: '../assets/images',
-			fonts: '../assets/fonts',
-			core: '../core',
-			tmp: 'tmp'
+			js     : '../assets/js',
+			sass   : '../assets/sass',
+			css    : '../assets/css',
+			images : '../assets/images',
+			fonts  : '../assets/fonts',
+			core   : '../core',
+			tmp    : 'tmp',
+			deploy : '../'
 		},
 
 
-		rsync_config : {
+		ftpConfig : {
+			host : 'ftp.SEU-SITE.com',
+			user : 'username',
+			pass : '1234',
+			remotePath : '/'
+		},
+
+
+		rsyncConfig : {
 			options : {
 				args : [ '--verbose' ],
 				exclude : [
@@ -33,16 +42,14 @@ var gulpconfig = function() {
 			},
 
 			staging : {
-				src: '../',
+				src: gulpconfig().dirs.deploy,
 				dest: 'user@host.com:~/PATH/wp-content/themes/odin'
 			},
 
 			production : {
-				src: '../',
+				src: gulpconfig().dirs.deploy,
 				dest: 'user@host.com:~/PATH/wp-content/themes/odin'
 			}
 		}
 	};
 };
-
-module.exports = gulpconfig;

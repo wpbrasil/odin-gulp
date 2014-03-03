@@ -16,7 +16,6 @@
 	"globals"  : {
 		"require" : true,
 		"console" : true,
-		"module"  : true,
-		"exports" : true
+		"module"  : true
 	}
 }
