@@ -168,18 +168,35 @@
 
 
 	gulp.task( 'zip', function() {
+		var dirs = gulpconfig.dirs;
+
 		gulp.src([
 			'../**/*',
 			'!../src/**/*',
 			'!../**/*.md',
-			'!' + gulpconfig.dirs.sass + '/**/*',
-			'!' + gulpconfig.dirs.js + '/bootstrap/**/*',
-			'!' + gulpconfig.dirs.js + '/libs/**/*',
-			'!' + gulpconfig.dirs.js + '/main.js',
+			'!' + dirs.sass + '/**/*',
+			'!' + dirs.js + '/bootstrap/**/*',
+			'!' + dirs.js + '/libs/**/*',
+			'!' + dirs.js + '/main.js',
 			'!../**/*.zip'
 		])
 		.pipe( zip( pkg.name + '.zip' ) )
 		.pipe( gulp.dest( gulpconfig.dirs.deploy ) );
+	});
+
+
+
+	gulp.task( 'get-bootstrap', function() {
+		var dirs = gulpconfig.dirs;
+
+		gulp.src([
+			dirs.tmp,
+			dirs.sas + '/bootstrap/',
+			dirs.js + '/bootstrap/',
+			dirs.js + '/libs/bootstrap.min.js',
+			dirs.fonts + '/bootstrap/'
+		])
+		.pipe( clean() );
 	});
 
 
@@ -191,16 +208,16 @@
 	gulp.task( 'optimize', [ 'imagemin' ] );
 	gulp.task( 'ftp', [ 'ftp-deploy' ] );
 	gulp.task( 'compress', [ 'default', 'zip' ] );
-	gulp.task( 'bootstrap', [
-		'clean-prepare',
-		'curl-bootstrap-sass',
-		'unzip-bootstrap-scss',
-		'rename-bootstrap-scss',
-		'rename-bootstrap-js',
-		'rename-bootstrap-fonts',
-		'clean-bootstrap',
-		'uglify-bootstrap',
-		'compass'
+	gulp.task( 'bootstrap', [ 'get-bootstrap'
+		// 'clean-prepare',
+		// 'curl-bootstrap-sass',
+		// 'unzip-bootstrap-scss',
+		// 'rename-bootstrap-scss',
+		// 'rename-bootstrap-js',
+		// 'rename-bootstrap-fonts',
+		// 'clean-bootstrap',
+		// 'uglify-bootstrap',
+		// 'compass'
 	]);
 
 
