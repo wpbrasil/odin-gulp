@@ -1,37 +1,40 @@
-(function() {
+;(function() {
 
 	'use strict';
 
-	var gulp      = require( 'gulp' );
-	var clean     = require( 'gulp-clean' );
-	var compass   = require( 'gulp-compass' );
-	var plumber   = require( 'gulp-plumber' );
-	var imagemin  = require( 'gulp-imagemin' );
-	var jshint    = require( 'gulp-jshint' );
-	var minifycss = require( 'gulp-minify-css' );
-	var rename    = require( 'gulp-rename' );
-	var uglify    = require( 'gulp-uglify' );
-	var zip       = require( 'gulp-zip' );
-	var rsync     = require( 'rsyncwrapper' ).rsync;
-	var ftp       = require( 'gulp-ftp' );
-	var gulpconfig = require( './gulpconfig' )();
+	var gulp       = require( 'gulp' );
+	var clean      = require( 'gulp-clean' );
+	var compass    = require( 'gulp-compass' );
+	var plumber    = require( 'gulp-plumber' );
+	var imagemin   = require( 'gulp-imagemin' );
+	var jshint     = require( 'gulp-jshint' );
+	var minifycss  = require( 'gulp-minify-css' );
+	var rename     = require( 'gulp-rename' );
+	var uglify     = require( 'gulp-uglify' );
+	var zip        = require( 'gulp-zip' );
+	var rsync      = require( 'rsyncwrapper' ).rsync;
+	var ftp        = require( 'gulp-ftp' );
+	var gulpconfig = require( './gulpconfig' );
+	var pkg        = require( './package.json' );
 
 	require( 'colors' );
 
 
 
 	gulp.task( 'jshint', function() {
-		gulp.src( [ gulpconfig.dirs.js + '/**/*.js', './gulpfile.js' ] )
-		.pipe( jshint() )
-		.pipe( jshint.reporter( 'default' ) );
+		var stream = gulp.src( [ gulpconfig.dirs.js + '/**/*.js', './gulpfile.js' ] )
+			.pipe( jshint() )
+			.pipe( jshint.reporter( 'default' ) );
+
+		return stream;
 	});
 
 
 
-	gulp.task( 'uglify', function() {
+	gulp.task( 'uglify', [ 'jshint' ], function() {
 		gulp.src([
-			'<%= gulpconfig.dirs.js %>/libs/*.js', // External libs/plugins
-			'<%= gulpconfig.dirs.js %>/main.js'    // Custom JavaScript
+			gulpconfig.dirs.js + '/libs/*.js', // External libs/plugins
+			gulpconfig.dirs.js + '/main.js'    // Custom JavaScript
 		])
 		.pipe( uglify() )
 		.pipe( gulp.dest( gulpconfig.dirs.js + '/main.min.js' ) );
@@ -149,7 +152,7 @@
 
 
 
-	gulp.task( 'ftp', function() {
+	gulp.task( 'ftp-deploy', function() {
 		var ftpConfig = gulpconfig.ftpConfig;
 
 		gulp.src( gulpconfig.dirs.deploy )
@@ -160,6 +163,23 @@
 				pass : ftpConfig.password
 			})
 		);
+	});
+
+
+
+	gulp.task( 'zip', function() {
+		gulp.src([
+			'../**/*',
+			'!../src/**/*',
+			'!../**/*.md',
+			'!' + gulpconfig.dirs.sass + '/**/*',
+			'!' + gulpconfig.dirs.js + '/bootstrap/**/*',
+			'!' + gulpconfig.dirs.js + '/libs/**/*',
+			'!' + gulpconfig.dirs.js + '/main.js',
+			'!../**/*.zip'
+		])
+		.pipe( zip( pkg.name + '.zip' ) )
+		.pipe( gulp.dest( gulpconfig.dirs.deploy ) );
 	});
 
 
