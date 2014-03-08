@@ -10,6 +10,7 @@
 	var jshint     = require( 'gulp-jshint' );
 	var minifycss  = require( 'gulp-minify-css' );
 	var rename     = require( 'gulp-rename' );
+	var  concat    = require( 'gulp-concat' );
 	var uglify     = require( 'gulp-uglify' );
 	var zip        = require( 'gulp-zip' );
 	var rsync      = require( 'rsyncwrapper' ).rsync;
@@ -36,8 +37,9 @@
 			gulpconfig.dirs.js + '/libs/*.js', // External libs/plugins
 			gulpconfig.dirs.js + '/main.js'    // Custom JavaScript
 		])
+		.pipe( concat( 'main.min.js' ) )
 		.pipe( uglify() )
-		.pipe( gulp.dest( gulpconfig.dirs.js + '/main.min.js' ) );
+		.pipe( gulp.dest( gulpconfig.dirs.js ) );
 	});
 
 

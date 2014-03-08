@@ -18,6 +18,7 @@
     "gulp-plumber": "~0.5.6",
     "rsyncwrapper": "~0.2.0",
     "colors": "~0.6.2",
-    "gulp-ftp": "~0.1.1"
+    "gulp-ftp": "~0.1.1",
+    "gulp-concat": "~2.1.7"
   }
 }
