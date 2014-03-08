@@ -37,7 +37,10 @@
 			],
 			recursive : true,
 			compareMode : 'checksum',
-			syncDestIgnoreExcl : true
+			syncDestIgnoreExcl : true,
+			onStdOut : function( data ) {
+				console.log( data );
+			}
 		},
 
 		staging : {

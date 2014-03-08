@@ -118,7 +118,7 @@
 		rsyncConfig.options.dest = rsyncConfig.staging.dest;
 
 		return rsync(
-			rsyncConfig,
+			rsyncConfig.options,
 			function( err, stdout, stderr, cmd ) {
 				console.log( 'Shell command was:', cmd.cyan );
 
@@ -139,7 +139,7 @@
 		rsyncConfig.options.dest = rsyncConfig.production.dest;
 
 		return rsync(
-			rsyncConfig,
+			rsyncConfig.options,
 			function( err, stdout, stderr, cmd ) {
 				console.log( 'Shell command was:', cmd.cyan );
 
