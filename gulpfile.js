@@ -1,5 +1,6 @@
 'use strict';
 
+var fs          = require( 'fs' );
 var gulp        = require( 'gulp' );
 var clean       = require( 'gulp-clean' );
 var compass     = require( 'gulp-compass' );
@@ -7,6 +8,7 @@ var plumber     = require( 'gulp-plumber' );
 var imagemin    = require( 'gulp-imagemin' );
 var jshint      = require( 'gulp-jshint' );
 var minifycss   = require( 'gulp-minify-css' );
+var curl        = require( 'node-curl' );
 // var rename      = require( 'gulp-rename' );
 var  gulpconcat = require( 'gulp-concat' );
 var uglify      = require( 'gulp-uglify' );
@@ -193,13 +195,24 @@ gulp.task( 'get-bootstrap', function() {
 	var dirs = gulpconfig.dirs;
 
 	gulp.src([
-		dirs.tmp,
+		dirs.tmp + '/*',
 		dirs.sass + '/bootstrap/*',
 		dirs.src_js + '/bootstrap/*',
 		dirs.src_js + '/libs/bootstrap.min.js',
 		dirs.fonts + '/bootstrap/*'
 	], { read: false })
 	.pipe( clean({ force: true }) );
+});
+
+
+
+gulp.task( 'curl', function() {
+	curl( 'https://github.com/twbs/bootstrap-sass/archive/master.zip', { raw: 1 }, function() {
+		fs.writeFile( './tmp/bootstrap-sass.zip', this.body, function( err ) {
+			if( err ) throw err;
+			console.log( './tmp/bootstrap.zip created!' );
+		});
+	});
 });
 
 
@@ -212,8 +225,8 @@ gulp.task( 'optimize', [ 'imagemin' ] );
 gulp.task( 'ftp', [ 'ftp-deploy' ] );
 gulp.task( 'compress', [ 'default', 'zip' ] );
 gulp.task( 'bootstrap', [
-	'get-bootstrap'
-	// 'clean-prepare',
+	'get-bootstrap',
+	'curl'
 	// 'curl-bootstrap-sass',
 	// 'unzip-bootstrap-scss',
 	// 'rename-bootstrap-scss',

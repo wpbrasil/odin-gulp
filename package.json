@@ -19,6 +19,7 @@
     "gulp-rename": "^1.2.0",
     "gulp-uglify": "^0.3.1",
     "gulp-zip": "^0.4.0",
+    "node-curl": "^0.3.1",
     "rsyncwrapper": "^0.4.0"
   }
 }
