@@ -11,6 +11,7 @@
     "gulp-clean": "^0.3.1",
     "gulp-compass": "^1.1.9",
     "gulp-concat": "^2.3.3",
+    "gulp-download": "0.0.1",
     "gulp-ftp": "^0.4.0",
     "gulp-imagemin": "^0.6.1",
     "gulp-jshint": "^1.7.1",
@@ -19,7 +20,6 @@
     "gulp-rename": "^1.2.0",
     "gulp-uglify": "^0.3.1",
     "gulp-zip": "^0.4.0",
-    "node-curl": "^0.3.1",
     "rsyncwrapper": "^0.4.0"
   }
 }
