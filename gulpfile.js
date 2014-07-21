@@ -194,12 +194,12 @@ gulp.task( 'get-bootstrap', function() {
 
 	gulp.src([
 		dirs.tmp,
-		dirs.sas + '/bootstrap/',
-		dirs.src_js + '/bootstrap/',
+		dirs.sass + '/bootstrap/*',
+		dirs.src_js + '/bootstrap/*',
 		dirs.src_js + '/libs/bootstrap.min.js',
-		dirs.fonts + '/bootstrap/'
-	])
-	.pipe( clean() );
+		dirs.fonts + '/bootstrap/*'
+	], { read: false })
+	.pipe( clean({ force: true }) );
 });
 
 
@@ -211,7 +211,8 @@ gulp.task( 'default', [ 'jshint', 'compass', 'uglify' ] );
 gulp.task( 'optimize', [ 'imagemin' ] );
 gulp.task( 'ftp', [ 'ftp-deploy' ] );
 gulp.task( 'compress', [ 'default', 'zip' ] );
-gulp.task( 'bootstrap', [ 'get-bootstrap'
+gulp.task( 'bootstrap', [
+	'get-bootstrap'
 	// 'clean-prepare',
 	// 'curl-bootstrap-sass',
 	// 'unzip-bootstrap-scss',
