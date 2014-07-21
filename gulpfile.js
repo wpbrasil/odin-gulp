@@ -8,8 +8,7 @@ var plumber     = require( 'gulp-plumber' );
 var imagemin    = require( 'gulp-imagemin' );
 var jshint      = require( 'gulp-jshint' );
 var minifycss   = require( 'gulp-minify-css' );
-var curl        = require( 'node-curl' );
-// var rename      = require( 'gulp-rename' );
+var rename      = require( 'gulp-rename' );
 var  gulpconcat = require( 'gulp-concat' );
 var uglify      = require( 'gulp-uglify' );
 var zip         = require( 'gulp-zip' );
@@ -44,7 +43,7 @@ gulp.task( 'uglify', [ 'jshint' ], function() {
 
 
 
-gulp.task( 'uglify-bootstrap', function() {
+gulp.task( 'uglify-bootstrap', [ 'clean-bootstrap' ], function() {
 	gulp.src([
 		gulpconfig.dirs.src_js + '/bootstrap/transition.js',
 		gulpconfig.dirs.src_js + '/bootstrap/alert.js',
@@ -191,29 +190,66 @@ gulp.task( 'zip', function() {
 
 
 
-gulp.task( 'get-bootstrap', function() {
+gulp.task( 'clean', function() {
 	var dirs = gulpconfig.dirs;
 
 	gulp.src([
 		dirs.tmp + '/*',
-		dirs.sass + '/bootstrap/*',
-		dirs.src_js + '/bootstrap/*',
+		dirs.sass + '/bootstrap',
+		dirs.src_js + '/bootstrap',
 		dirs.src_js + '/libs/bootstrap.min.js',
-		dirs.fonts + '/bootstrap/*'
+		dirs.fonts + '/bootstrap'
 	], { read: false })
 	.pipe( clean({ force: true }) );
 });
 
 
 
-gulp.task( 'curl', function() {
-	curl( 'https://github.com/twbs/bootstrap-sass/archive/master.zip', { raw: 1 }, function() {
-		fs.writeFile( './tmp/bootstrap-sass.zip', this.body, function( err ) {
-			if( err ) throw err;
-			console.log( './tmp/bootstrap.zip created!' );
-		});
+gulp.task( 'get-bootstrap', [ 'clean' ], function() {
+	var url = 'https://github.com/twbs/bootstrap-sass/archive/master.zip';
+	return require( 'gulp-download' )( url )
+	.pipe( gulp.dest( gulpconfig.dirs.tmp ) );
+});
+
+
+
+gulp.task( 'unzip', [ 'get-bootstrap' ], function( cb ) {
+	var exec = require( 'child_process' ).exec;
+	exec( 'cd tmp/ && unzip master.zip && cd ..', function( err, stdout, stderr ) {
+		console.log( stdout );
+		console.log( stderr );
+		cb( err );
 	});
 });
+
+
+
+gulp.task( 'rename', [ 'unzip' ], function() {
+	gulp.src( gulpconfig.dirs.tmp + '/bootstrap-sass-master/assets/stylesheets/bootstrap/**/*' )
+		.pipe( gulp.dest( gulpconfig.dirs.sass + '/bootstrap' ) );
+
+	gulp.src( gulpconfig.dirs.tmp + '/bootstrap-sass-master/assets/javascripts/bootstrap/**/*' )
+		.pipe( gulp.dest( gulpconfig.dirs.src_js + '/bootstrap' ) );
+
+	gulp.src( gulpconfig.dirs.tmp + '/bootstrap-sass-master/assets/fonts/bootstrap/**/*' )
+		.pipe( gulp.dest( gulpconfig.dirs.fonts + '/bootstrap' ) );
+});
+
+
+
+gulp.task( 'clean-bootstrap', [ 'rename' ], function() {
+	var dirs = gulpconfig.dirs;
+
+	gulp.src([
+		dirs.tmp + '/*',
+		dirs.sass + '/bootstrap/bootstrap.scss'
+	], { read: false })
+	.pipe( clean({ force: true }) );
+});
+
+
+
+
 
 
 
@@ -224,18 +260,9 @@ gulp.task( 'default', [ 'jshint', 'compass', 'uglify' ] );
 gulp.task( 'optimize', [ 'imagemin' ] );
 gulp.task( 'ftp', [ 'ftp-deploy' ] );
 gulp.task( 'compress', [ 'default', 'zip' ] );
-gulp.task( 'bootstrap', [
-	'get-bootstrap',
-	'curl'
-	// 'curl-bootstrap-sass',
-	// 'unzip-bootstrap-scss',
-	// 'rename-bootstrap-scss',
-	// 'rename-bootstrap-js',
-	// 'rename-bootstrap-fonts',
-	// 'clean-bootstrap',
-	// 'uglify-bootstrap',
-	// 'compass'
-]);
+gulp.task( 'bootstrap', [ 'uglify-bootstrap' ], function() {
+	gulp.start( 'compass' );
+});
 
 
 
