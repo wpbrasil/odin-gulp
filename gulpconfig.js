@@ -9,7 +9,8 @@ exports.dirs = {
 	fonts  : '../assets/fonts',
 	core   : '../core',
 	tmp    : 'tmp',
-	deploy : '../'
+	deploy : '../',
+	root   : '../'
 };
 
 

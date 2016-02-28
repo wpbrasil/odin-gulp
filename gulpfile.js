@@ -1,6 +1,7 @@
 'use strict';
 
 var fs          = require( 'fs' );
+var path        = require( 'path' );
 var gulp        = require( 'gulp' );
 var clean       = require( 'gulp-clean' );
 var compass     = require( 'gulp-compass' );
@@ -9,11 +10,12 @@ var imagemin    = require( 'gulp-imagemin' );
 var jshint      = require( 'gulp-jshint' );
 var minifycss   = require( 'gulp-minify-css' );
 var rename      = require( 'gulp-rename' );
-var  gulpconcat = require( 'gulp-concat' );
+var gulpconcat  = require( 'gulp-concat' );
 var uglify      = require( 'gulp-uglify' );
 var zip         = require( 'gulp-zip' );
 var rsync       = require( 'rsyncwrapper' ).rsync;
 var ftp         = require( 'gulp-ftp' );
+var livereload  = require( 'gulp-livereload' );
 var gulpconfig  = require( './gulpconfig' );
 var pkg         = require( './package.json' );
 
@@ -38,7 +40,8 @@ gulp.task( 'uglify', [ 'jshint' ], function() {
 	])
 	.pipe( gulpconcat( 'main.min.js' ) )
 	.pipe( uglify() )
-	.pipe( gulp.dest( gulpconfig.dirs.js ) );
+	.pipe( gulp.dest( gulpconfig.dirs.js ) )
+	.pipe( livereload() );
 });
 
 
@@ -59,7 +62,8 @@ gulp.task( 'uglify-bootstrap', [ 'clean-bootstrap' ], function() {
 		gulpconfig.dirs.src_js + '/bootstrap/affix.js'
 	])
 	.pipe( uglify() )
-	.pipe( gulp.dest( gulpconfig.dirs.js + '/libs/bootstrap.min.js' ) );
+	.pipe( gulp.dest( gulpconfig.dirs.js + '/libs/bootstrap.min.js' ) )
+	.pipe( livereload() );
 });
 
 
@@ -75,7 +79,8 @@ gulp.task( 'compass', function() {
 			})
 		)
 		.pipe( minifycss() )
-		.pipe( gulp.dest( gulpconfig.dirs.css ) );
+		.pipe( gulp.dest( gulpconfig.dirs.css ) )
+		.pipe( livereload() );
 
 	return stream;
 });
@@ -83,6 +88,8 @@ gulp.task( 'compass', function() {
 
 
 gulp.task( 'watch', function() {
+	livereload.listen();
+
 	var watchers = [
 		gulp.watch( gulpconfig.dirs.sass + '/**/*', [ 'compass' ] ),
 		gulp.watch( gulpconfig.dirs.src_js + '/**/*.js', [ 'uglify' ] )
@@ -93,10 +100,14 @@ gulp.task( 'watch', function() {
 			// Get just filename
 			var filename = e.path.split( '/' ).pop();
 			var bars = '\n================================================';
-
 			console.log( ( bars + '\nFile ' + filename + ' was ' + e.type + ', runing tasks...' + bars ).toUpperCase() );
 		});
 	});
+
+	//Livereload for PHP files
+    gulp.watch( gulpconfig.dirs.root + '**/*.php' ).on( 'change', function( file ) {
+        livereload.changed( file );
+    });
 });
 
 
