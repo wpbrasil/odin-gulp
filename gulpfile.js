@@ -3,13 +3,13 @@
 var fs          = require( 'fs' );
 var gulp        = require( 'gulp' );
 var clean       = require( 'gulp-clean' );
-var compass     = require( 'gulp-compass' );
+var sass        = require( 'gulp-sass' );
 var plumber     = require( 'gulp-plumber' );
 var imagemin    = require( 'gulp-imagemin' );
 var jshint      = require( 'gulp-jshint' );
 var minifycss   = require( 'gulp-minify-css' );
 var rename      = require( 'gulp-rename' );
-var  gulpconcat = require( 'gulp-concat' );
+var gulpconcat = require( 'gulp-concat' );
 var uglify      = require( 'gulp-uglify' );
 var zip         = require( 'gulp-zip' );
 var rsync       = require( 'rsyncwrapper' ).rsync;
@@ -64,16 +64,10 @@ gulp.task( 'uglify-bootstrap', [ 'clean-bootstrap' ], function() {
 
 
 
-gulp.task( 'compass', function() {
+gulp.task( 'sass', function() {
 	var stream = gulp.src( gulpconfig.dirs.sass + '/**/*' )
 		.pipe( plumber() )
-		.pipe(
-			compass({
-				config_file : './config.rb',
-				css : gulpconfig.dirs.css,
-				sass: gulpconfig.dirs.sass
-			})
-		)
+		.pipe( sass().on('error', sass.logError) )
 		.pipe( minifycss() )
 		.pipe( gulp.dest( gulpconfig.dirs.css ) );
 
@@ -84,7 +78,7 @@ gulp.task( 'compass', function() {
 
 gulp.task( 'watch', function() {
 	var watchers = [
-		gulp.watch( gulpconfig.dirs.sass + '/**/*', [ 'compass' ] ),
+		gulp.watch( gulpconfig.dirs.sass + '/**/*', [ 'sass' ] ),
 		gulp.watch( gulpconfig.dirs.src_js + '/**/*.js', [ 'uglify' ] )
 	];
 
@@ -256,12 +250,12 @@ gulp.task( 'clean-bootstrap', [ 'rename' ], function() {
 /**
  * Execution Tasks
  */
-gulp.task( 'default', [ 'jshint', 'compass', 'uglify' ] );
+gulp.task( 'default', [ 'jshint', 'sass', 'uglify' ] );
 gulp.task( 'optimize', [ 'imagemin' ] );
 gulp.task( 'ftp', [ 'ftp-deploy' ] );
 gulp.task( 'compress', [ 'default', 'zip' ] );
 gulp.task( 'bootstrap', [ 'uglify-bootstrap' ], function() {
-	gulp.start( 'compass' );
+	gulp.start( 'sass' );
 });
 
 
